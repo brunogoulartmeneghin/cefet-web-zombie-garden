@@ -66,6 +66,19 @@ router.get('/new/', function(req, res) {
 //      - Em caso de sucesso do INSERT, colocar uma mensagem feliz
 //      - Em caso de erro do INSERT, colocar mensagem vermelhinha
 
+router.post('/', function(req, res) {
+  db.query('INSERT INTO person SET alive = true, eatenBy = NULL, name = '+db.escape(req.body.name),
+    function(err, result) {
+      if (err) {
+        req.flash('error', 'Erro desconhecido. Descrição: ' + err);
+      } else if (result.affectedRows !== 1) {
+        req.flash('error', 'Nao ha pessoa para ser inserida');
+      } else {
+        req.flash('success', 'A pessoa foi inteiramente inserida.');
+      }
+      res.redirect('/');
+  });
+});
 
 /* DELETE uma pessoa */
 // Exercício 2: IMPLEMENTAR AQUI
@@ -74,5 +87,19 @@ router.get('/new/', function(req, res) {
 //   2. Redirecionar para a rota de listagem de pessoas
 //      - Em caso de sucesso do INSERT, colocar uma mensagem feliz
 //      - Em caso de erro do INSERT, colocar mensagem vermelhinha
+
+router.delete('/:id', function(req, res) {
+  db.query('DELETE FROM person WHERE id = ' + db.escape(req.params.id),
+    function(err, result) {
+      if (err) {
+        req.flash('error', 'Erro desconhecido. Descrição: ' + err);
+      } else if (result.affectedRows !== 1) {
+        req.flash('error', 'Nao ha pessoa para ser deletada');
+      } else {
+        req.flash('success', 'A pessoa foi excluída.');
+      }
+      res.redirect('/');
+  });
+});
 
 module.exports = router;
